@@ -34,4 +34,8 @@ Copyright 2005-2022 Automattic, Inc.
 */
 
 
-
+// Make Sure our plugin is safe from attacks
+if(!function_exists('add_action')){
+    echo "You cannot access our file,silly !";
+    die; 
+}
