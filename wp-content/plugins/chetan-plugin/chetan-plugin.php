@@ -33,9 +33,24 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 Copyright 2005-2022 Automattic, Inc.
 */
 
+// Some Constants
+define( 'CHETAN_PLUGIN_VERSION', '5.0.1' );
+define( 'CHETAN_PLUGIN__MINIMUM_WP_VERSION', '5.0' );
+define( 'CHETAN_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'CHETAN_PLUGIN_DELETE_LIMIT', 10000 );
 
 // Make Sure our plugin is safe from attacks
 if(!function_exists('add_action')){
     echo "You cannot access our file,silly !";
     die; 
 }
+
+require_once CHETAN_PLUGIN_DIR .'/includes/class.chetan-plugin.php';
+
+
+register_activation_hook(__FILE__, ['ChetanPlugin', 'activate']);
+register_activation_hook(__FILE__, ['ChetanPlugin', 'deactivate']);
+
+add_action( 'init', array( 'ChetanPlugin', 'activate' ) );
+
+
