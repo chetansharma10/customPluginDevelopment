@@ -1,27 +1,30 @@
 <?php
-class ChetanPlugin
+
+namespace Includes;
+
+class Config
 {
-    private static $post_name = "Book";
 
-    public static function activate()
-    {
-        self::init_hooks();
-        self::custom_post_type();
-        flush_rewrite_rules();
-    }
+    // Initilize Class Name
+    private static $className = Config::class;
 
-    public static function deactivate()
-    {
-        flush_rewrite_rules();
-    }
-
+    /**
+     * Initialize the hooks
+     * @return void
+     */
     public static function init_hooks()
     {
-        add_action('admin_enqueue_scripts', [ChetanPlugin::class, 'add_admin_files']);
-        add_action('admin_menu', [ChetanPlugin::class, 'add_plugin_menu_to_sidebar']);
-        add_filter('plugin_action_links', [ChetanPlugin::class, 'add_link_to_plugin']);
+        add_action('admin_enqueue_scripts', [self::$className, 'add_admin_files']);
+        add_action('admin_menu', [self::$className, 'add_plugin_menu_to_sidebar']);
+        add_filter('plugin_action_links_chetan-plugin/chetan-plugin.php', [self::$className, 'add_link_to_plugin']);
     }
 
+    /**
+     * Used to add settings link in a plugin,and it will redirect to specific template,
+     * It is a part of filters hook
+     * @param mixed $links
+     * @return array
+     */
     public static function add_link_to_plugin($links)
     {
         $settings_links="<a href='?page=chetan_plugin'>Settings</a>";
@@ -29,16 +32,29 @@ class ChetanPlugin
         return $links;
     }
 
+    /**
+     * Add Plugin Menu to Sidebar where we see all theme settings
+     * @return void
+     */
     public static function add_plugin_menu_to_sidebar()
     {
-        add_menu_page("ChetanPlugin", "Chetan Plugin", "manage_options", "chetan_plugin", [ChetanPlugin::class,'add_page_to_plugin'], 'dashicons-format-status', 110);
+        add_menu_page("ChetanPlugin", "Chetan Plugin", "manage_options", "chetan_plugin", [self::$className,'add_page_to_plugin'], 'dashicons-format-status', 110);
     }
 
+    /**
+     * Including the template for plugin
+     * @return void
+     */
     public static function add_page_to_plugin(){
         require_once plugin_dir_path(__FILE__)."../" . "templates/template.chetan-plugin.php";
     }
 
-
+    /**
+     * Read all files .xyz in directory of single path and return files path array
+     * @param mixed $basePath
+     * @param mixed $resultant
+     * @return void
+     */
     public static function readFiles($basePath, &$resultant)
     {
         $files = scandir($basePath);
@@ -54,11 +70,21 @@ class ChetanPlugin
         }
     }
 
+    /**
+     * Get Files Paths from readFiles logic function
+     * @param mixed $basePath
+     * @return array
+     */
     public static function get_files_paths($basePath):array{
         $resultant = array();
         self::readFiles($basePath, $resultant);
         return $resultant;
     }
+
+    /**
+     * Read all files path from filesPaths array and include using wp_enqueue
+     * @return void
+     */
     public static function add_admin_files()
     {
         $files_paths=self::get_files_paths(plugin_dir_path(__FILE__) . ".." . "/assets/admin/");
@@ -70,20 +96,6 @@ class ChetanPlugin
                 wp_enqueue_script("File" . $key, plugins_url(explode("/plugins/",$value)[1]));
             }
         }
-        
     }
 
-    public static function custom_post_type()
-    {
-        $args = [
-            "labels" => [
-                "name" => self::$post_name,
-                "singular_name" => self::$post_name,
-                "add_new" => "Add new " . self::$post_name,
-                "add_new_item" => "Add new " . self::$post_name,
-            ],
-            "public" => true
-        ];
-        register_post_type('Book', $args);
-    }
 }

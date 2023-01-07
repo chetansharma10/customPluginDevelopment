@@ -1,0 +1,17 @@
+{
+    "name": "chetansharma/chetan-plugin",
+    "description": "Its a custom plugin",
+    "authors": [
+        {
+            "name": "chetansharma10",
+            "email": "sparkycks10@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload":{
+        "psr-4":{
+            "Includes\\":"./includes"
+        }
+    }
+}
